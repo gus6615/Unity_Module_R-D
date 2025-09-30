@@ -1,0 +1,80 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 74d290448466d7e4498c5d327303f261, type: 3}
+  m_Name: NewStatTree
+  m_EditorClassIdentifier: 
+  nodes:
+  - key: Value
+    nodeType: 0
+    value: 0
+    operatorType: 0
+    minValue: -3.4028235e+38
+    maxValue: 3.4028235e+38
+    position: {x: 1282, y: 709}
+    childIndices: 
+    parentIndex: -1
+  - key: Node_1
+    nodeType: 0
+    value: 0
+    operatorType: 0
+    minValue: -3.4028235e+38
+    maxValue: 3.4028235e+38
+    position: {x: 225, y: 176}
+    childIndices: 
+    parentIndex: -1
+  - key: Attack
+    nodeType: 0
+    value: 0
+    operatorType: 0
+    minValue: -3.4028235e+38
+    maxValue: 3.4028235e+38
+    position: {x: 1336, y: 681}
+    childIndices: 
+    parentIndex: -1
+  - key: InGame
+    nodeType: 0
+    value: 0
+    operatorType: 0
+    minValue: -3.4028235e+38
+    maxValue: 3.4028235e+38
+    position: {x: 75, y: 306}
+    childIndices: 
+    parentIndex: -1
+  - key: Total
+    nodeType: 1
+    value: 0
+    operatorType: 0
+    minValue: -3.4028235e+38
+    maxValue: 3.4028235e+38
+    position: {x: 160, y: 99.23985}
+    childIndices: 
+    parentIndex: 5
+  - key: Node_5
+    nodeType: 0
+    value: 1
+    operatorType: 0
+    minValue: -3.4028235e+38
+    maxValue: 3.4028235e+38
+    position: {x: -73, y: 309}
+    childIndices: 04000000
+    parentIndex: -1
+  - key: Node_6
+    nodeType: 0
+    value: 2
+    operatorType: 0
+    minValue: -3.4028235e+38
+    maxValue: 3.4028235e+38
+    position: {x: 338, y: 309}
+    childIndices: 
+    parentIndex: -1
+  rootIndex: 4
+  treeName: NewStatTree
