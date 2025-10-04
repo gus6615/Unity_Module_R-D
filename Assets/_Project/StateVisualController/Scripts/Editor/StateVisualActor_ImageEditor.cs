@@ -2,10 +2,10 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace ComponentStateActor.Editor
+namespace StateVisualController.Editor
 {
-    [CustomEditor(typeof(ImageStateActor))]
-    public class ImageStateActorEditor : ComponentStateActorBaseEditor
+    [CustomEditor(typeof(StateVisualActor_Image))]
+    public class StateVisualActor_ImageEditor : StateVisualControllerBaseEditor
     {
         private SerializedProperty targetProp;
 

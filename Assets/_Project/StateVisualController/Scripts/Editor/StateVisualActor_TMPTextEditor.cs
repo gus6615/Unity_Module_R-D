@@ -1,12 +1,11 @@
-using ComponentStateActor;
 using TMPro;
 using UnityEditor;
 using UnityEngine;
 
-namespace ComponentStateActor.Editor
+namespace StateVisualController.Editor
 {
-	[CustomEditor(typeof(TMPTextStateActor))]
-	public sealed class TMPTextStateActorEditor : ComponentStateActorBaseEditor
+	[CustomEditor(typeof(StateVisualActor_TMPText))]
+	public sealed class StateVisualActor_TMPTextEditor : StateVisualControllerBaseEditor
 	{
 		protected override void DrawTargetField()
 		{

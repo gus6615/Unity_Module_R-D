@@ -1,13 +1,13 @@
 using UnityEngine;
 
-namespace ComponentStateActor
+namespace StateVisualController
 {
 	/// <summary>
 	/// Animator(Mecanim) 제어용 State Actor
 	/// asset로 RuntimeAnimatorController 또는 AnimationClip을 받아서 적용/재생합니다.
 	/// color는 사용하지 않습니다.
 	/// </summary>
-	public sealed class AnimatorStateActor : ComponentStateActorBase
+	public sealed class StateVisualActor_AnimatorEditor : StateVisualControllerBase
 	{
 		private Animator targetAnimator;
 
@@ -23,7 +23,7 @@ namespace ComponentStateActor
 			}
 		}
 
-		protected override void ApplyStateData(ComponentStateData stateData)
+		protected override void ApplyStateData(StateVisualData stateVisualData)
 		{
 			if (targetAnimator == null)
 			{
@@ -31,7 +31,7 @@ namespace ComponentStateActor
 				return;
 			}
 
-			if (stateData.asset is AnimationClip clip)
+			if (stateVisualData.asset is AnimationClip clip)
 			{
 				var baseController = targetAnimator.runtimeAnimatorController;
 				if (baseController == null)

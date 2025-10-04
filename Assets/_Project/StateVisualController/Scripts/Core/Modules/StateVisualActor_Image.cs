@@ -2,9 +2,9 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace ComponentStateActor
+namespace StateVisualController
 {
-    public sealed class ImageStateActor : ComponentStateActorBase
+    public sealed class StateVisualActor_Image : StateVisualControllerBase
     {
         private Image targetImage;
         
@@ -20,7 +20,7 @@ namespace ComponentStateActor
             }
         }
 
-        protected override void ApplyStateData(ComponentStateData stateData)
+        protected override void ApplyStateData(StateVisualData stateVisualData)
         {
             if (targetImage == null)
             {
@@ -28,7 +28,7 @@ namespace ComponentStateActor
                 return;
             }
             
-            if (stateData.asset is Sprite sprite)
+            if (stateVisualData.asset is Sprite sprite)
             {
                 targetImage.sprite = sprite;
             }
@@ -37,7 +37,7 @@ namespace ComponentStateActor
                 Debug.LogError("StateImageActor: 상태 데이터의 Asset이 Sprite 타입이 아닙니다.");
             }
 
-            targetImage.color = stateData.color;
+            targetImage.color = stateVisualData.color;
         }
     }
 }

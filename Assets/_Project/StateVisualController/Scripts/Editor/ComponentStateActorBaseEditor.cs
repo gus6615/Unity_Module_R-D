@@ -4,21 +4,21 @@ using System.Reflection;
 using UnityEditor;
 using UnityEngine;
 
-namespace ComponentStateActor.Editor
+namespace StateVisualController.Editor
 {
-    [CustomEditor(typeof(ComponentStateActorBase), true)]
+    [CustomEditor(typeof(StateVisualControllerBase), true)]
     [CanEditMultipleObjects]
-    public class ComponentStateActorBaseEditor : UnityEditor.Editor
+    public class StateVisualControllerBaseEditor : UnityEditor.Editor
     {
         private SerializedProperty targetProp;
         private SerializedProperty stateDataDictProp;
 
-        private ComponentStateActorBase actor;
+        private StateVisualControllerBase actor;
         private string newStateKey = "";
 
         protected virtual void OnEnable()
         {
-            actor = (ComponentStateActorBase)target;
+            actor = (StateVisualControllerBase)target;
             targetProp = serializedObject.FindProperty("target");
             stateDataDictProp = serializedObject.FindProperty("stateDataDict");
         }
@@ -112,19 +112,19 @@ namespace ComponentStateActor.Editor
             }
         }
 
-        private static string GetCurrentStateKey(ComponentStateActorBase instance)
+        private static string GetCurrentStateKey(StateVisualControllerBase instance)
         {
             if (instance == null) return string.Empty;
             const BindingFlags flags = BindingFlags.Instance | BindingFlags.NonPublic;
-            var field = typeof(ComponentStateActorBase).GetField("currentStateKey", flags);
+            var field = typeof(StateVisualControllerBase).GetField("currentStateKey", flags);
             return field != null ? (string)field.GetValue(instance) : string.Empty;
         }
 
-        protected static void TryInvokeSetup(ComponentStateActorBase instance)
+        protected static void TryInvokeSetup(StateVisualControllerBase instance)
         {
             if (instance == null) return;
             const BindingFlags flags = BindingFlags.Instance | BindingFlags.NonPublic;
-            var method = typeof(ComponentStateActorBase).GetMethod("Setup", flags);
+            var method = typeof(StateVisualControllerBase).GetMethod("Setup", flags);
             method?.Invoke(instance, null);
         }
     }

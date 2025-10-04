@@ -1,12 +1,12 @@
 using UnityEngine;
 
-namespace ComponentStateActor
+namespace StateVisualController
 {
 	/// <summary>
 	/// Legacy Animation 컴포넌트 제어용 State Actor
 	/// asset로 AnimationClip을 받아서 재생합니다. color는 사용하지 않습니다.
 	/// </summary>
-	public sealed class AnimationStateActor : ComponentStateActorBase
+	public sealed class StateVisualActor_Animation : StateVisualControllerBase
 	{
 		private Animation targetAnimation;
 
@@ -22,7 +22,7 @@ namespace ComponentStateActor
 			}
 		}
 
-		protected override void ApplyStateData(ComponentStateData stateData)
+		protected override void ApplyStateData(StateVisualData stateVisualData)
 		{
 			if (targetAnimation == null)
 			{
@@ -30,7 +30,7 @@ namespace ComponentStateActor
 				return;
 			}
 
-			if (stateData.asset is AnimationClip clip)
+			if (stateVisualData.asset is AnimationClip clip)
 			{
 				targetAnimation.Play(clip.name);
 			}

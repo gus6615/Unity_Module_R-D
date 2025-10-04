@@ -1,21 +1,21 @@
 using UnityEditor;
 using UnityEngine;
 
-namespace ComponentStateActor.Editor
+namespace StateVisualController.Editor
 {
-	[CustomEditor(typeof(AnimationStateActor))]
-	public sealed class AnimationStateActorEditor : ComponentStateActorBaseEditor
+	[CustomEditor(typeof(StateVisualActor_AnimatorEditor))]
+	public sealed class AnimatorStateActorEditor : StateVisualControllerBaseEditor
 	{
 		protected override void DrawTargetField()
 		{
 			EditorGUI.BeginChangeCheck();
-			var comp = (Component)EditorGUILayout.ObjectField("Target (Animation)", GetTarget(), typeof(Animation), true);
+			var comp = (Component)EditorGUILayout.ObjectField("Target (Animator)", GetTarget(), typeof(Animator), true);
 			if (EditorGUI.EndChangeCheck())
 			{
 				SetTarget(comp);
 			}
 
-			EditorGUILayout.HelpBox("지원 Asset: AnimationClip. 상태 전환 시 해당 클립을 재생합니다.", MessageType.Info);
+			EditorGUILayout.HelpBox("지원 Asset: RuntimeAnimatorController, AnimationClip(컨트롤러 기반 재생).", MessageType.Info);
 		}
 
 		private Component GetTarget()

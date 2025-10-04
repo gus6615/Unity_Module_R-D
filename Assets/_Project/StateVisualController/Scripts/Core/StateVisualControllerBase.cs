@@ -3,12 +3,12 @@ using System.Linq;
 using AYellowpaper.SerializedCollections;
 using UnityEngine;
 
-namespace ComponentStateActor
+namespace StateVisualController
 {
-    public abstract class ComponentStateActorBase : MonoBehaviour
+    public abstract class StateVisualControllerBase : MonoBehaviour
     {
         [SerializeField] protected Component target;
-        [SerializeField] protected SerializedDictionary<string, ComponentStateData> stateDataDict;
+        [SerializeField] protected SerializedDictionary<string, StateVisualData> stateDataDict;
         
         protected string currentStateKey = string.Empty;
 
@@ -39,14 +39,14 @@ namespace ComponentStateActor
         }
 
         protected abstract void Setup();
-        protected abstract void ApplyStateData(ComponentStateData stateImageData);
+        protected abstract void ApplyStateData(StateVisualData stateVisualImageData);
         
         public bool HasState(string key) => stateDataDict.ContainsKey(key);
         public bool HasAsset(string key) => stateDataDict.ContainsKey(key) && stateDataDict[key].HasAsset;
         public bool HasColor(string key) => stateDataDict.ContainsKey(key) && stateDataDict[key].HasColor;
-        public ComponentStateData GetStateData(string key) => stateDataDict.ContainsKey(key) ? stateDataDict[key] : ComponentStateData.Empty;
+        public StateVisualData GetStateData(string key) => stateDataDict.ContainsKey(key) ? stateDataDict[key] : StateVisualData.Empty;
         
-        public void AddState(string key, ComponentStateData data)
+        public void AddState(string key, StateVisualData visualData)
         {
             if (string.IsNullOrEmpty(key))
             {
@@ -54,7 +54,7 @@ namespace ComponentStateActor
                 return;
             }
             
-            stateDataDict[key] = data;
+            stateDataDict[key] = visualData;
         }
 
         public void RemoveState(string key)

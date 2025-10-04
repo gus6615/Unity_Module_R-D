@@ -1,9 +1,9 @@
 using TMPro;
 using UnityEngine;
 
-namespace ComponentStateActor
+namespace StateVisualController
 {
-	public sealed class TMPTextStateActor : ComponentStateActorBase
+	public sealed class StateVisualActor_TMPText : StateVisualControllerBase
 	{
 		private TMP_Text targetText;
 
@@ -19,7 +19,7 @@ namespace ComponentStateActor
 			}
 		}
 
-		protected override void ApplyStateData(ComponentStateData stateData)
+		protected override void ApplyStateData(StateVisualData stateVisualData)
 		{
 			if (targetText == null)
 			{
@@ -30,21 +30,21 @@ namespace ComponentStateActor
 			// Asset 해석 규칙:
 			// - TextAsset: text 내용을 설정
 			// - TMP_FontAsset: 폰트 변경
-			if (stateData.asset is TextAsset textAsset)
+			if (stateVisualData.asset is TextAsset textAsset)
 			{
 				targetText.text = textAsset.text;
 			}
-			else if (stateData.asset is TMP_FontAsset fontAsset)
+			else if (stateVisualData.asset is TMP_FontAsset fontAsset)
 			{
 				targetText.font = fontAsset;
 			}
-			else if (stateData.asset != null)
+			else if (stateVisualData.asset != null)
 			{
 				Debug.LogError("TMPTextStateActor: 상태 데이터의 Asset 타입이 지원되지 않습니다. (지원: TextAsset, TMP_FontAsset)");
 			}
 
 			// 색상 적용
-			targetText.color = stateData.color;
+			targetText.color = stateVisualData.color;
 		}
 	}
 }

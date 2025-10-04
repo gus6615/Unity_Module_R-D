@@ -1,17 +1,17 @@
 
 using UnityEngine;
 
-namespace ComponentStateActor
+namespace StateVisualController
 {
     [System.Serializable]
-    public struct ComponentStateData
+    public struct StateVisualData
     {
-        public static ComponentStateData Empty => new ComponentStateData(null, default);
+        public static StateVisualData Empty => new StateVisualData(null, default);
         
         [SerializeField] public Object asset;
         [SerializeField] public Color color;
         
-        public ComponentStateData(Object asset, Color color = default)
+        public StateVisualData(Object asset, Color color = default)
         {
             this.asset = asset;
             this.color = color;
@@ -20,12 +20,12 @@ namespace ComponentStateActor
         public bool HasAsset => asset != null;
         public bool HasColor => color != default;
         
-        public static bool operator ==(ComponentStateData a, ComponentStateData b)
+        public static bool operator ==(StateVisualData a, StateVisualData b)
         {
             return a.asset == b.asset && a.color == b.color;
         }
         
-        public static bool operator !=(ComponentStateData a, ComponentStateData b)
+        public static bool operator !=(StateVisualData a, StateVisualData b)
         {
             return !(a == b);
         }
