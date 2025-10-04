@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace StateSystem
+namespace StateVisualController
 {
     // ==================== 핵심 데이터 구조 ====================
     

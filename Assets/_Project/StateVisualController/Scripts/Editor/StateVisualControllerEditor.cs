@@ -4,7 +4,7 @@ using System;
 using System.Linq;
 using System.Collections.Generic;
 
-namespace StateSystem.Editor
+namespace StateVisualController.Editor
 {
     [CustomEditor(typeof(StateVisualController))]
     public class StateVisualControllerEditor : UnityEditor.Editor

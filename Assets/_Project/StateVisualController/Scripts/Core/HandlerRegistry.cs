@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace StateSystem
+namespace StateVisualController
 {
     /// <summary>
     /// 컴포넌트 타입별로 사용 가능한 핸들러들을 관리하는 레지스트리
@@ -144,7 +144,7 @@ namespace StateSystem
             try
             {
                 // 핸들러 타입 이름으로 Type 찾기
-                Type handlerType = Type.GetType($"StateSystem.{handlerTypeName}");
+                Type handlerType = Type.GetType($"StateVisualController.{handlerTypeName}");
                 if (handlerType == null)
                 {
                     Debug.LogError($"Handler type '{handlerTypeName}' not found");
