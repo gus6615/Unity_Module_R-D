@@ -7,6 +7,40 @@ using UnityEditor;
 namespace StateVisualController
 {
     /// <summary>
+    /// 각 상태별 핸들러 데이터를 저장하는 클래스
+    /// </summary>
+    [Serializable]
+    public class StateHandlerData
+    {
+        [SerializeField] private string stateName;
+        [SerializeField] private ScriptableObject data;
+        
+        public string StateName 
+        { 
+            get => stateName; 
+            set => stateName = value; 
+        }
+        
+        public ScriptableObject Data 
+        { 
+            get => data; 
+            set => data = value; 
+        }
+        
+        public StateHandlerData()
+        {
+            stateName = string.Empty;
+            data = null;
+        }
+        
+        public StateHandlerData(string stateName)
+        {
+            this.stateName = stateName;
+            this.data = null;
+        }
+    }
+
+    /// <summary>
     /// 상태 변경을 처리하는 핸들러의 베이스 클래스
     /// 각 컴포넌트 타입별로 구체적인 핸들러가 이를 상속받아 구현
     /// MonoBehaviour를 상속받지 않으므로 Target 오브젝트에 컴포넌트로 부착되지 않음
