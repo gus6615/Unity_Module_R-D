@@ -132,30 +132,35 @@ namespace StateSystem
         }
 
         /// <summary>
-        /// 모든 등록된 핸들러 정보를 로그로 출력 (디버깅용)
+        /// 핸들러 타입 이름으로 핸들러 인스턴스를 생성
         /// </summary>
-        public static void LogAllHandlers()
+        /// <param name="handlerTypeName">핸들러 타입 이름</param>
+        /// <returns>생성된 핸들러 인스턴스</returns>
+        public static BaseStateHandler CreateHandler(string handlerTypeName)
         {
-            Initialize();
-            
-            Debug.Log("=== Handler Registry ===");
-            foreach (var kvp in componentToHandlers)
+            if (string.IsNullOrEmpty(handlerTypeName))
+                return null;
+                
+            try
             {
-                Debug.Log($"Component: {kvp.Key.Name}");
-                foreach (var handler in kvp.Value)
+                // 핸들러 타입 이름으로 Type 찾기
+                Type handlerType = Type.GetType($"StateSystem.{handlerTypeName}");
+                if (handlerType == null)
                 {
-                    Debug.Log($"  - Handler: {handler.Name}");
+                    Debug.LogError($"Handler type '{handlerTypeName}' not found");
+                    return null;
                 }
+                
+                // 핸들러 인스턴스 생성 (컴포넌트로 추가하지 않음)
+                var handler = Activator.CreateInstance(handlerType) as BaseStateHandler;
+                return handler;
+            }
+            catch (System.Exception e)
+            {
+                Debug.LogError($"Failed to create handler '{handlerTypeName}': {e.Message}");
+                return null;
             }
         }
 
-        /// <summary>
-        /// 레지스트리를 초기화 (테스트용)
-        /// </summary>
-        public static void Reset()
-        {
-            componentToHandlers?.Clear();
-            isInitialized = false;
-        }
     }
 }

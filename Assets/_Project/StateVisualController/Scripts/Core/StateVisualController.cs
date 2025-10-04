@@ -104,7 +104,7 @@ namespace StateSystem
     }
 
     // ==================== 메인 컨트롤러 ====================
-
+    
     /// <summary>
     /// 상태 시각화를 관리하는 메인 컨트롤러
     /// 다양한 상태에 따라 UI 요소들의 시각적 표현을 제어
@@ -118,7 +118,11 @@ namespace StateSystem
         // Properties
         public List<StateData> States => states;
         public List<ActorData> Actors => actors;
-        public string CurrentState => currentState;
+        public string CurrentState 
+        { 
+            get => currentState; 
+            set => currentState = value; 
+        }
 
         #region State Management
 
@@ -142,7 +146,7 @@ namespace StateSystem
             }
 
             states.Add(new StateData(stateName));
-
+            
             // 모든 Actor에 새로운 상태 데이터 추가
             foreach (var actor in actors)
             {
@@ -151,8 +155,7 @@ namespace StateSystem
                     actor.StateDataList.Add(new StateHandlerData(stateName));
                 }
             }
-
-            Debug.Log($"Successfully added state: {stateName}");
+            
             return true;
         }
 
@@ -176,7 +179,7 @@ namespace StateSystem
                 Debug.LogWarning($"State '{stateName}' not found!");
                 return false;
             }
-
+            
             // 모든 Actor에서 해당 상태 데이터 제거
             foreach (var actor in actors)
             {
@@ -189,7 +192,6 @@ namespace StateSystem
                 currentState = string.Empty;
             }
 
-            Debug.Log($"Successfully removed state: {stateName}");
             return true;
         }
 
@@ -216,7 +218,7 @@ namespace StateSystem
 
             currentState = stateName;
             ApplyState();
-            Debug.Log($"Current state set to: {stateName}");
+
             return true;
         }
 
@@ -231,7 +233,6 @@ namespace StateSystem
         public int AddActor()
         {
             actors.Add(new ActorData());
-            Debug.Log($"Added new actor at index: {actors.Count - 1}");
             return actors.Count - 1;
         }
 
@@ -249,13 +250,14 @@ namespace StateSystem
             }
 
             var actor = actors[index];
-            if (actor.Handler != null && actor.Target != null)
+            if (actor.Handler != null)
             {
-                DestroyImmediate(actor.Handler);
+                // 핸들러가 더 이상 컴포넌트가 아니므로 단순히 참조만 정리
+                actor.Handler = null;
             }
 
             actors.RemoveAt(index);
-            Debug.Log($"Successfully removed actor at index: {index}");
+
             return true;
         }
 
@@ -272,9 +274,10 @@ namespace StateSystem
             if (actor == null) return;
 
             // 기존 핸들러 제거
-            if (actor.Handler != null && actor.Target != null)
+            if (actor.Handler != null)
             {
-                DestroyImmediate(actor.Handler);
+                // 핸들러가 더 이상 컴포넌트가 아니므로 단순히 참조만 정리
+                actor.Handler = null;
             }
 
             // 타겟 변경 시 관련 데이터 초기화
@@ -282,8 +285,6 @@ namespace StateSystem
             actor.SelectedComponentType = null;
             actor.Handler = null;
             actor.HandlerType = null;
-
-            Debug.Log($"Actor target changed for: {actor.Target?.name}");
         }
 
         /// <summary>
@@ -297,8 +298,6 @@ namespace StateSystem
 
             actor.SelectedComponent = component;
             actor.SelectedComponentType = component?.GetType().Name;
-
-            Debug.Log($"Component selected: {component?.GetType().Name}");
         }
 
         /// <summary>
@@ -315,31 +314,27 @@ namespace StateSystem
                 return false;
             }
 
-            // 기존 Handler 제거
-            if (actor.Handler != null)
+            // 핸들러 인스턴스 생성 (컴포넌트로 추가하지 않음)
+            var handler = HandlerRegistry.CreateHandler(handlerType.Name);
+            if (handler == null)
             {
-                DestroyImmediate(actor.Handler);
-            }
-
-            // 새 Handler 추가
-            actor.Handler = actor.Target.AddComponent(handlerType) as BaseStateHandler;
-            if (actor.Handler == null)
-            {
-                Debug.LogError($"Failed to add handler component: {handlerType.Name}");
+                Debug.LogError($"Failed to create handler instance: {handlerType.Name}");
                 return false;
             }
 
+            actor.Handler = handler;
             actor.HandlerType = handlerType.Name;
             actor.Handler.SetTargetComponent(actor.SelectedComponent);
 
             // 모든 상태에 대한 데이터 초기화
             actor.StateDataList.Clear();
+            
             foreach (var state in states)
             {
-                actor.StateDataList.Add(new StateHandlerData(state.StateName));
+                var newStateData = new StateHandlerData(state.StateName);
+                actor.StateDataList.Add(newStateData);
             }
-
-            Debug.Log($"Handler set: {handlerType.Name}");
+            
             return true;
         }
 
@@ -357,11 +352,23 @@ namespace StateSystem
                 Debug.LogWarning("No current state set!");
                 return;
             }
-
+        
             int appliedCount = 0;
+            int skippedCount = 0;
+            
             foreach (var actor in actors)
             {
-                if (!actor.IsEnabled || actor.Handler == null) continue;
+                if (!actor.IsEnabled)
+                {
+                    skippedCount++;
+                    continue;
+                }
+                
+                if (actor.Handler == null)
+                {
+                    skippedCount++;
+                    continue;
+                }
 
                 var stateData = actor.StateDataList.Find(d => d.StateName == currentState);
                 if (stateData != null)
@@ -369,9 +376,12 @@ namespace StateSystem
                     actor.Handler.ApplyState(stateData);
                     appliedCount++;
                 }
+                else
+                {
+                    Debug.LogWarning($"No state data found for state '{currentState}' on actor {actor.Target?.name}");
+                    skippedCount++;
+                }
             }
-
-            Debug.Log($"Applied state '{currentState}' to {appliedCount} actors");
         }
 
         #endregion
@@ -406,6 +416,163 @@ namespace StateSystem
             return states.Count;
         }
 
+        #endregion
+
+        #region Cleanup
+        
+        /// <summary>
+        /// 모든 Actor의 핸들러를 복구하는 메서드
+        /// </summary>
+        public void RestoreAllHandlers()
+        {
+            foreach (var actor in actors)
+            {
+                if (actor.Handler == null && actor.Target != null && !string.IsNullOrEmpty(actor.HandlerType))
+                {
+                    RestoreHandlerForActor(actor);
+                }
+            }
+        }
+        
+        /// <summary>
+        /// 특정 Actor의 핸들러를 복구하는 메서드
+        /// </summary>
+        /// <param name="actor">핸들러를 복구할 Actor</param>
+        private void RestoreHandlerForActor(ActorData actor)
+        {
+            if (actor.Target == null || string.IsNullOrEmpty(actor.HandlerType))
+                return;
+                
+            try
+            {
+                // 핸들러 인스턴스 생성 (컴포넌트로 추가하지 않음)
+                var handler = HandlerRegistry.CreateHandler(actor.HandlerType);
+                if (handler != null)
+                {
+                    actor.Handler = handler;
+                    
+                    // 핸들러에 타겟 컴포넌트 설정
+                    if (actor.SelectedComponent != null)
+                    {
+                        actor.Handler.SetTargetComponent(actor.SelectedComponent);
+                    }
+                }
+            }
+            catch (System.Exception e)
+            {
+                Debug.LogError($"Failed to restore handler for actor on {actor.Target?.name}: {e.Message}");
+            }
+        }
+        
+        /// <summary>
+        /// 모든 상태를 정리하는 메서드
+        /// </summary>
+        public void CleanupAll()
+        {
+            // 상태 정리
+            int stateCount = states.Count;
+            states.Clear();
+            
+            // 모든 Actor의 상태 데이터 정리
+            foreach (var actor in actors)
+            {
+                actor.StateDataList.Clear();
+            }
+            
+            // 현재 상태 초기화
+            currentState = string.Empty;
+        }
+        
+        /// <summary>
+        /// 모든 상태와 Actor를 정리하는 메서드
+        /// </summary>
+        public void CleanupEverything()
+        {
+            // 상태 정리
+            int stateCount = states.Count;
+            states.Clear();
+            
+            // Actor 정리
+            int actorCount = actors.Count;
+            actors.Clear();
+            
+            // 현재 상태 초기화
+            currentState = string.Empty;
+        }
+        
+        /// <summary>
+        /// Actor 복구를 위한 백업 데이터
+        /// </summary>
+        [System.Serializable]
+        public class ActorBackupData
+        {
+            public bool isEnabled;
+            public GameObject target;
+            public Component selectedComponent;
+            public string selectedComponentType;
+            public string handlerType;
+            public List<StateHandlerData> stateDataList;
+            
+            public ActorBackupData(ActorData actor)
+            {
+                isEnabled = actor.IsEnabled;
+                target = actor.Target;
+                selectedComponent = actor.SelectedComponent;
+                selectedComponentType = actor.SelectedComponentType;
+                handlerType = actor.HandlerType;
+                stateDataList = new List<StateHandlerData>(actor.StateDataList);
+            }
+            
+            public ActorData ToActorData()
+            {
+                var actor = new ActorData();
+                actor.IsEnabled = isEnabled;
+                actor.Target = target;
+                actor.SelectedComponent = selectedComponent;
+                actor.SelectedComponentType = selectedComponentType;
+                actor.HandlerType = handlerType;
+                actor.StateDataList = new List<StateHandlerData>(stateDataList);
+                return actor;
+            }
+        }
+        
+        /// <summary>
+        /// Actor 백업 데이터를 저장하는 메서드
+        /// </summary>
+        /// <returns>백업된 Actor 데이터 리스트</returns>
+        public List<ActorBackupData> BackupActors()
+        {
+            var backup = new List<ActorBackupData>();
+            foreach (var actor in actors)
+            {
+                backup.Add(new ActorBackupData(actor));
+            }
+            return backup;
+        }
+        
+        /// <summary>
+        /// 백업된 Actor 데이터를 복구하는 메서드
+        /// </summary>
+        /// <param name="backupData">복구할 백업 데이터</param>
+        public void RestoreActors(List<ActorBackupData> backupData)
+        {
+            if (backupData == null) return;
+            
+            actors.Clear();
+            
+            foreach (var backup in backupData)
+            {
+                var actor = backup.ToActorData();
+                actors.Add(actor);
+                
+                // 핸들러 복구
+                if (!string.IsNullOrEmpty(actor.HandlerType) && actor.Target != null)
+                {
+                    RestoreHandlerForActor(actor);
+                }
+            }
+        }
+        
         #endregion
     }
 }
