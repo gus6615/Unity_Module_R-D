@@ -17,13 +17,5 @@ namespace StateVisualController
             get => content; 
             set => content = value ?? string.Empty; 
         }
-        
-        private void OnValidate()
-        {
-            if (string.IsNullOrEmpty(content))
-            {
-                Debug.LogWarning($"TextContentData '{name}' has empty content!");
-            }
-        }
     }
 }

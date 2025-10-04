@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using StateVisualController.Util;
 
 namespace StateVisualController
 {
@@ -27,20 +28,35 @@ namespace StateVisualController
         }
 
         /// <summary>
-        /// 기본 핸들러들을 등록
+        /// 기본 핸들러들을 자동으로 등록
         /// </summary>
         private static void RegisterDefaultHandlers()
         {
-            // Image 컴포넌트용 핸들러들
-            RegisterHandler(typeof(Image), typeof(ImageSpriteHandler));
-            RegisterHandler(typeof(Image), typeof(ImageColorHandler));
-
-            // Text 컴포넌트용 핸들러들
-            RegisterHandler(typeof(Text), typeof(TextContentHandler));
-
-            // Transform(GameObject) 컴포넌트용 핸들러들
-            RegisterHandler(typeof(Transform), typeof(GameObjectActiveHandler));
-            RegisterHandler(typeof(RectTransform), typeof(GameObjectActiveHandler));
+            // BaseStateHandler를 상속받는 모든 핸들러 타입들을 찾기
+            Type[] handlerTypes = ReflectUtil.GetAllImplementTypes<BaseStateHandler>();
+            
+            foreach (Type handlerType in handlerTypes)
+            {
+                // 핸들러 인스턴스를 임시로 생성하여 GetTargetComponentType 호출
+                try
+                {
+                    var handler = Activator.CreateInstance(handlerType) as BaseStateHandler;
+                    if (handler != null)
+                    {
+                        Type[] targetTypes = handler.GetTargetComponentType();
+                        
+                        // 각 타겟 컴포넌트 타입에 대해 핸들러 등록
+                        foreach (Type targetType in targetTypes)
+                        {
+                            RegisterHandler(targetType, handlerType);
+                        }
+                    }
+                }
+                catch (Exception e)
+                {
+                    Debug.LogError($"Failed to register handler '{handlerType.Name}': {e.Message}");
+                }
+            }
         }
 
         /// <summary>
@@ -76,62 +92,6 @@ namespace StateVisualController
         }
 
         /// <summary>
-        /// 커스텀 핸들러를 동적으로 등록
-        /// </summary>
-        /// <param name="componentType">컴포넌트 타입</param>
-        /// <param name="handlerType">핸들러 타입</param>
-        /// <returns>등록 성공 여부</returns>
-        public static bool RegisterCustomHandler(Type componentType, Type handlerType)
-        {
-            Initialize();
-            
-            if (!typeof(BaseStateHandler).IsAssignableFrom(handlerType))
-            {
-                Debug.LogError($"{handlerType.Name} must inherit from BaseStateHandler");
-                return false;
-            }
-
-            if (componentType == null)
-            {
-                Debug.LogError("Component type cannot be null");
-                return false;
-            }
-
-            RegisterHandler(componentType, handlerType);
-            Debug.Log($"Successfully registered custom handler {handlerType.Name} for component {componentType.Name}");
-            return true;
-        }
-
-        /// <summary>
-        /// 특정 컴포넌트 타입에서 핸들러를 제거
-        /// </summary>
-        /// <param name="componentType">컴포넌트 타입</param>
-        /// <param name="handlerType">제거할 핸들러 타입</param>
-        /// <returns>제거 성공 여부</returns>
-        public static bool UnregisterHandler(Type componentType, Type handlerType)
-        {
-            Initialize();
-            
-            if (!componentToHandlers.ContainsKey(componentType))
-            {
-                Debug.LogWarning($"No handlers registered for component type {componentType.Name}");
-                return false;
-            }
-
-            bool removed = componentToHandlers[componentType].Remove(handlerType);
-            if (removed)
-            {
-                Debug.Log($"Successfully unregistered handler {handlerType.Name} from component {componentType.Name}");
-            }
-            else
-            {
-                Debug.LogWarning($"Handler {handlerType.Name} was not registered for component {componentType.Name}");
-            }
-            
-            return removed;
-        }
-
-        /// <summary>
         /// 핸들러 타입 이름으로 핸들러 인스턴스를 생성
         /// </summary>
         /// <param name="handlerTypeName">핸들러 타입 이름</param>
@@ -161,6 +121,5 @@ namespace StateVisualController
                 return null;
             }
         }
-
     }
 }

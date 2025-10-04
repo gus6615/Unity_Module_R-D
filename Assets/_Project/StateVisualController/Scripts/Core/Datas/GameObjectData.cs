@@ -17,10 +17,5 @@ namespace StateVisualController
             get => isActive; 
             set => isActive = value; 
         }
-        
-        private void OnValidate()
-        {
-            // Boolean 값은 항상 유효하므로 별도 검증 불필요
-        }
     }
 }

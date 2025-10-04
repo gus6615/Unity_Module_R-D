@@ -34,12 +34,6 @@ namespace StateVisualController.Editor
             UpdateTargetGroups();
         }
         
-        private void OnDisable()
-        {
-            // 핸들러가 일반 클래스 인스턴스이므로 자동 메모리 관리됨
-            // 명시적 정리 불필요
-        }
-        
         /// <summary>
         /// StateVisualController가 있는 GameObject와 그 자식 오브젝트들을 가져오는 메서드
         /// </summary>
@@ -860,6 +854,21 @@ namespace StateVisualController.Editor
                     EditorUtility.SetDirty(controller);
                 }
             }
+            else if (handler is TextMeshProUGUIContentHandler)
+            {
+                if (stateData.Data == null)
+                {
+                    stateData.Data = ScriptableObject.CreateInstance<TextMeshProUGUIContentData>();
+                }
+                
+                var textData = stateData.Data as TextMeshProUGUIContentData;
+                EditorGUI.BeginChangeCheck();
+                textData.Content = EditorGUILayout.TextField("Text", textData.Content);
+                if (EditorGUI.EndChangeCheck())
+                {
+                    EditorUtility.SetDirty(controller);
+                }
+            }
             else if (handler is GameObjectActiveHandler)
             {
                 if (stateData.Data == null)
@@ -875,18 +884,6 @@ namespace StateVisualController.Editor
                     EditorUtility.SetDirty(controller);
                 }
             }
-        }
-        
-        /// <summary>
-        /// Actor와 상태 백업을 위한 정보를 기록하는 메서드
-        /// </summary>
-        private void RecordActorAndStateBackup()
-        {
-            // Actor 백업
-            actorBackup = controller.BackupActors();
-            
-            // 상태 백업
-            stateBackup = new List<StateData>(controller.States);
         }
         
         /// <summary>

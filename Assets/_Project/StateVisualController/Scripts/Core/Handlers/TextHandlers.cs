@@ -19,6 +19,6 @@ namespace StateVisualController
             }
         }
 
-        public override Type GetTargetComponentType() => typeof(Text);
+        public override Type[] GetTargetComponentType() => new Type[] { typeof(Text) };
     }
 }

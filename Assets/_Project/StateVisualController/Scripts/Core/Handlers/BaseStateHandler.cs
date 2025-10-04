@@ -19,10 +19,10 @@ namespace StateVisualController
         public abstract void ApplyState(StateHandlerData data);
         
         /// <summary>
-        /// 이 핸들러가 처리할 수 있는 컴포넌트 타입을 반환
+        /// 이 핸들러가 처리할 수 있는 컴포넌트 타입들을 반환
         /// </summary>
-        /// <returns>대상 컴포넌트 타입</returns>
-        public abstract Type GetTargetComponentType();
+        /// <returns>대상 컴포넌트 타입 배열</returns>
+        public abstract Type[] GetTargetComponentType();
         
         /// <summary>
         /// 타겟 컴포넌트를 설정

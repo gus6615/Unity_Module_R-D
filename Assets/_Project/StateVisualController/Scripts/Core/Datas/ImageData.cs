@@ -17,14 +17,6 @@ namespace StateVisualController
             get => sprite; 
             set => sprite = value; 
         }
-        
-        private void OnValidate()
-        {
-            if (sprite == null)
-            {
-                Debug.LogWarning($"ImageSpriteData '{name}' has no sprite assigned!");
-            }
-        }
     }
 
     /// <summary>
@@ -39,15 +31,6 @@ namespace StateVisualController
         { 
             get => color; 
             set => color = value; 
-        }
-        
-        private void OnValidate()
-        {
-            // Color 값이 유효한 범위 내에 있는지 확인
-            color.r = Mathf.Clamp01(color.r);
-            color.g = Mathf.Clamp01(color.g);
-            color.b = Mathf.Clamp01(color.b);
-            color.a = Mathf.Clamp01(color.a);
         }
     }
 }

@@ -465,42 +465,6 @@ namespace StateVisualController
         }
         
         /// <summary>
-        /// 모든 상태를 정리하는 메서드
-        /// </summary>
-        public void CleanupAll()
-        {
-            // 상태 정리
-            int stateCount = states.Count;
-            states.Clear();
-            
-            // 모든 Actor의 상태 데이터 정리
-            foreach (var actor in actors)
-            {
-                actor.StateDataList.Clear();
-            }
-            
-            // 현재 상태 초기화
-            currentState = string.Empty;
-        }
-        
-        /// <summary>
-        /// 모든 상태와 Actor를 정리하는 메서드
-        /// </summary>
-        public void CleanupEverything()
-        {
-            // 상태 정리
-            int stateCount = states.Count;
-            states.Clear();
-            
-            // Actor 정리
-            int actorCount = actors.Count;
-            actors.Clear();
-            
-            // 현재 상태 초기화
-            currentState = string.Empty;
-        }
-        
-        /// <summary>
         /// Actor 복구를 위한 백업 데이터
         /// </summary>
         [System.Serializable]

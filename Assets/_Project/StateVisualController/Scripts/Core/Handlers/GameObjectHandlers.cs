@@ -18,6 +18,6 @@ namespace StateVisualController
             }
         }
 
-        public override Type GetTargetComponentType() => typeof(Transform);
+        public override Type[] GetTargetComponentType() => new Type[] { typeof(Transform), typeof(RectTransform) };
     }
 }

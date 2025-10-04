@@ -19,7 +19,7 @@ namespace StateVisualController
             }
         }
 
-        public override Type GetTargetComponentType() => typeof(Image);
+        public override Type[] GetTargetComponentType() => new Type[] { typeof(Image) };
     }
 
     /// <summary>
@@ -35,6 +35,6 @@ namespace StateVisualController
             }
         }
 
-        public override Type GetTargetComponentType() => typeof(Image);
+        public override Type[] GetTargetComponentType() => new Type[] { typeof(Image) };
     }
 }
