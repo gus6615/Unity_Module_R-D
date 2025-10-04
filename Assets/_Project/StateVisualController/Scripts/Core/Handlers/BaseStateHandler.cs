@@ -1,5 +1,8 @@
 using System;
 using UnityEngine;
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
 namespace StateVisualController
 {
@@ -32,5 +35,18 @@ namespace StateVisualController
         {
             targetComponent = component;
         }
+
+#if UNITY_EDITOR
+        /// <summary>
+        /// 에디터에서 상태 데이터 필드를 그리는 가상 메서드
+        /// 각 핸들러에서 오버라이드하여 구현
+        /// </summary>
+        /// <param name="stateData">상태 데이터</param>
+        /// <param name="controller">컨트롤러 참조</param>
+        public virtual void DrawFields(StateHandlerData stateData, StateVisualController controller)
+        {
+            EditorGUILayout.HelpBox($"No field drawer implemented for handler type: {GetType().Name}", MessageType.Warning);
+        }
+#endif
     }
 }

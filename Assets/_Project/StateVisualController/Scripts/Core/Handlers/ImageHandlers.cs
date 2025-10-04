@@ -1,6 +1,9 @@
 using System;
 using UnityEngine;
 using UnityEngine.UI;
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
 namespace StateVisualController
 {
@@ -20,6 +23,24 @@ namespace StateVisualController
         }
 
         public override Type[] GetTargetComponentType() => new Type[] { typeof(Image) };
+
+#if UNITY_EDITOR
+        public override void DrawFields(StateHandlerData stateData, StateVisualController controller)
+        {
+            if (stateData.Data == null)
+            {
+                stateData.Data = ScriptableObject.CreateInstance<ImageSpriteData>();
+            }
+            
+            var spriteData = stateData.Data as ImageSpriteData;
+            EditorGUI.BeginChangeCheck();
+            spriteData.Sprite = (Sprite)EditorGUILayout.ObjectField("Sprite", spriteData.Sprite, typeof(Sprite), false);
+            if (EditorGUI.EndChangeCheck())
+            {
+                EditorUtility.SetDirty(controller);
+            }
+        }
+#endif
     }
 
     /// <summary>
@@ -36,5 +57,23 @@ namespace StateVisualController
         }
 
         public override Type[] GetTargetComponentType() => new Type[] { typeof(Image) };
+
+#if UNITY_EDITOR
+        public override void DrawFields(StateHandlerData stateData, StateVisualController controller)
+        {
+            if (stateData.Data == null)
+            {
+                stateData.Data = ScriptableObject.CreateInstance<ImageColorData>();
+            }
+            
+            var colorData = stateData.Data as ImageColorData;
+            EditorGUI.BeginChangeCheck();
+            colorData.Color = EditorGUILayout.ColorField("Color", colorData.Color);
+            if (EditorGUI.EndChangeCheck())
+            {
+                EditorUtility.SetDirty(controller);
+            }
+        }
+#endif
     }
 }

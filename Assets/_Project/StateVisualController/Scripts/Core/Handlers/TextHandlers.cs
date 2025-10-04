@@ -1,6 +1,9 @@
 using System;
 using UnityEngine;
 using UnityEngine.UI;
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
 namespace StateVisualController
 {
@@ -20,5 +23,23 @@ namespace StateVisualController
         }
 
         public override Type[] GetTargetComponentType() => new Type[] { typeof(Text) };
+
+#if UNITY_EDITOR
+        public override void DrawFields(StateHandlerData stateData, StateVisualController controller)
+        {
+            if (stateData.Data == null)
+            {
+                stateData.Data = ScriptableObject.CreateInstance<TextContentData>();
+            }
+            
+            var textData = stateData.Data as TextContentData;
+            EditorGUI.BeginChangeCheck();
+            textData.Content = EditorGUILayout.TextField("Text", textData.Content);
+            if (EditorGUI.EndChangeCheck())
+            {
+                EditorUtility.SetDirty(controller);
+            }
+        }
+#endif
     }
 }

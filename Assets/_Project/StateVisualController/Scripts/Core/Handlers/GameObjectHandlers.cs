@@ -1,5 +1,8 @@
 using System;
 using UnityEngine;
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
 namespace StateVisualController
 {
@@ -19,5 +22,23 @@ namespace StateVisualController
         }
 
         public override Type[] GetTargetComponentType() => new Type[] { typeof(Transform), typeof(RectTransform) };
+
+#if UNITY_EDITOR
+        public override void DrawFields(StateHandlerData stateData, StateVisualController controller)
+        {
+            if (stateData.Data == null)
+            {
+                stateData.Data = ScriptableObject.CreateInstance<GameObjectActiveData>();
+            }
+            
+            var activeData = stateData.Data as GameObjectActiveData;
+            EditorGUI.BeginChangeCheck();
+            activeData.IsActive = EditorGUILayout.Toggle("Active", activeData.IsActive);
+            if (EditorGUI.EndChangeCheck())
+            {
+                EditorUtility.SetDirty(controller);
+            }
+        }
+#endif
     }
 }

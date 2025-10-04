@@ -809,81 +809,12 @@ namespace StateVisualController.Editor
 
         private void DrawHandlerSpecificFields(BaseStateHandler handler, StateHandlerData stateData)
         {
-            if (handler is ImageSpriteHandler)
-            {
-                if (stateData.Data == null)
-                {
-                    stateData.Data = ScriptableObject.CreateInstance<ImageSpriteData>();
-                }
-                
-                var spriteData = stateData.Data as ImageSpriteData;
-                EditorGUI.BeginChangeCheck();
-                spriteData.Sprite = (Sprite)EditorGUILayout.ObjectField("Sprite", spriteData.Sprite, typeof(Sprite), false);
-                if (EditorGUI.EndChangeCheck())
-                {
-                    EditorUtility.SetDirty(controller);
-                }
-            }
-            else if (handler is ImageColorHandler)
-            {
-                if (stateData.Data == null)
-                {
-                    stateData.Data = ScriptableObject.CreateInstance<ImageColorData>();
-                }
-                
-                var colorData = stateData.Data as ImageColorData;
-                EditorGUI.BeginChangeCheck();
-                colorData.Color = EditorGUILayout.ColorField("Color", colorData.Color);
-                if (EditorGUI.EndChangeCheck())
-                {
-                    EditorUtility.SetDirty(controller);
-                }
-            }
-            else if (handler is TextContentHandler)
-            {
-                if (stateData.Data == null)
-                {
-                    stateData.Data = ScriptableObject.CreateInstance<TextContentData>();
-                }
-                
-                var textData = stateData.Data as TextContentData;
-                EditorGUI.BeginChangeCheck();
-                textData.Content = EditorGUILayout.TextField("Text", textData.Content);
-                if (EditorGUI.EndChangeCheck())
-                {
-                    EditorUtility.SetDirty(controller);
-                }
-            }
-            else if (handler is TextMeshProUGUIContentHandler)
-            {
-                if (stateData.Data == null)
-                {
-                    stateData.Data = ScriptableObject.CreateInstance<TextMeshProUGUIContentData>();
-                }
-                
-                var textData = stateData.Data as TextMeshProUGUIContentData;
-                EditorGUI.BeginChangeCheck();
-                textData.Content = EditorGUILayout.TextField("Text", textData.Content);
-                if (EditorGUI.EndChangeCheck())
-                {
-                    EditorUtility.SetDirty(controller);
-                }
-            }
-            else if (handler is GameObjectActiveHandler)
-            {
-                if (stateData.Data == null)
-                {
-                    stateData.Data = ScriptableObject.CreateInstance<GameObjectActiveData>();
-                }
-                
-                var activeData = stateData.Data as GameObjectActiveData;
-                EditorGUI.BeginChangeCheck();
-                activeData.IsActive = EditorGUILayout.Toggle("Active", activeData.IsActive);
-                if (EditorGUI.EndChangeCheck())
-                {
-                    EditorUtility.SetDirty(controller);
-                }
-            }
+#if UNITY_EDITOR
+            // 핸들러의 DrawFields 메서드를 직접 호출
+            handler.DrawFields(stateData, controller);
+#else
+            EditorGUILayout.HelpBox("Editor only feature", MessageType.Info);
+#endif
         }
         
         /// <summary>
