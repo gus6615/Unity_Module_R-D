@@ -176,7 +176,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 33dcbd2065677684497f5fd37636ac0e, type: 3}
+  m_Sprite: {fileID: 21300000, guid: db33631ba231ec344a98d2154ce8f24b, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -273,7 +273,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &92831485
+--- !u!114 &217422099
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -282,10 +282,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 0}
+  m_Script: {fileID: 11500000, guid: de40e6b368b0cd1448bc59fdfaf53718, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp:StateVisualController:ImageColorData
-  color: {r: 1, g: 1, b: 1, a: 1}
+  m_EditorClassIdentifier: 
+  sprite: {fileID: 21300000, guid: db33631ba231ec344a98d2154ce8f24b, type: 3}
 --- !u!1 &539643700
 GameObject:
   m_ObjectHideFlags: 0
@@ -388,6 +388,19 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
+--- !u!114 &640558767
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: de40e6b368b0cd1448bc59fdfaf53718, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sprite: {fileID: 21300000, guid: 33dcbd2065677684497f5fd37636ac0e, type: 3}
 --- !u!1 &996644068
 GameObject:
   m_ObjectHideFlags: 0
@@ -460,19 +473,9 @@ MonoBehaviour:
     handlerType: ImageSpriteHandler
     stateDataList:
     - stateName: A
-      data: {fileID: 1218932642}
+      data: {fileID: 640558767}
     - stateName: B
-      data: {fileID: 1764255429}
-  - isEnabled: 1
-    target: {fileID: 7416828}
-    selectedComponent: {fileID: 7416830}
-    selectedComponentType: Image
-    handlerType: ImageColorHandler
-    stateDataList:
-    - stateName: A
-      data: {fileID: 1008207854}
-    - stateName: B
-      data: {fileID: 92831485}
+      data: {fileID: 217422099}
   - isEnabled: 1
     target: {fileID: 1743270851}
     selectedComponent: {fileID: 1743270853}
@@ -480,23 +483,20 @@ MonoBehaviour:
     handlerType: TextMeshProUGUIContentHandler
     stateDataList:
     - stateName: A
-      data: {fileID: 1960978591}
+      data: {fileID: 1176967800}
     - stateName: B
-      data: {fileID: 1849425371}
-  currentState: A
---- !u!114 &1008207854
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 0}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp:StateVisualController:ImageColorData
-  color: {r: 1, g: 1, b: 1, a: 1}
+      data: {fileID: 1218542597}
+  - isEnabled: 1
+    target: {fileID: 1743270851}
+    selectedComponent: {fileID: 1743270853}
+    selectedComponentType: TextMeshProUGUI
+    handlerType: TextMeshProUGUIColorHandler
+    stateDataList:
+    - stateName: A
+      data: {fileID: 2135603069}
+    - stateName: B
+      data: {fileID: 1636131756}
+  currentState: B
 --- !u!1 &1131250191
 GameObject:
   m_ObjectHideFlags: 0
@@ -618,7 +618,7 @@ MonoBehaviour:
   m_LightCookieSize: {x: 1, y: 1}
   m_LightCookieOffset: {x: 0, y: 0}
   m_SoftShadowQuality: 0
---- !u!114 &1218932642
+--- !u!114 &1176967800
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -627,10 +627,23 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5dba4d9a6eefd14439b1c6a3cf959b81, type: 3}
+  m_Script: {fileID: 11500000, guid: 2b2e464ff7e3e5443a3c70f8f2436afc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  sprite: {fileID: 21300000, guid: 33dcbd2065677684497f5fd37636ac0e, type: 3}
+  content: Dia
+--- !u!114 &1218542597
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2b2e464ff7e3e5443a3c70f8f2436afc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  content: Gold
 --- !u!1 &1274123226
 GameObject:
   m_ObjectHideFlags: 0
@@ -799,6 +812,19 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1636131756
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 0}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp:StateVisualController:TextMeshProUGUIColorData
+  color: {r: 1, g: 1, b: 1, a: 1}
 --- !u!1 &1743270851
 GameObject:
   m_ObjectHideFlags: 0
@@ -856,7 +882,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Dia
+  m_text: Gold
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -935,7 +961,7 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1743270851}
   m_CullTransparentMesh: 1
---- !u!114 &1764255429
+--- !u!114 &2135603069
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -944,36 +970,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5dba4d9a6eefd14439b1c6a3cf959b81, type: 3}
+  m_Script: {fileID: 0}
   m_Name: 
-  m_EditorClassIdentifier: 
-  sprite: {fileID: 21300000, guid: db33631ba231ec344a98d2154ce8f24b, type: 3}
---- !u!114 &1849425371
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e4e67383bd7898449b3df8b49ffe2e2f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  content: Gold
---- !u!114 &1960978591
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e4e67383bd7898449b3df8b49ffe2e2f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  content: Dia
+  m_EditorClassIdentifier: Assembly-CSharp:StateVisualController:TextMeshProUGUIColorData
+  color: {r: 0, g: 0.5, b: 1, a: 1}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
