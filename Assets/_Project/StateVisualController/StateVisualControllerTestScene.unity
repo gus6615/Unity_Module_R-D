@@ -604,10 +604,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1274123227}
     m_Modifications:
-    - target: {fileID: 1121871874842722343, guid: 8b11797487d0c25419963b4126990e1e, type: 3}
-      propertyPath: currentState
-      value: Gold
-      objectReference: {fileID: 0}
     - target: {fileID: 2042945714634719403, guid: 8b11797487d0c25419963b4126990e1e, type: 3}
       propertyPath: m_Name
       value: Target
