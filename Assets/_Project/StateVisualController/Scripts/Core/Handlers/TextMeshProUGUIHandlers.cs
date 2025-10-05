@@ -10,41 +10,48 @@ namespace StateVisualController
     // ==================== TextMeshProUGUI 관련 데이터 클래스들 ====================
     
     /// <summary>
-    /// TextMeshProUGUI 내용 변경을 위한 데이터 클래스
+    /// TextMeshProUGUI 내용 변경을 위한 직렬화 가능한 데이터 클래스
     /// </summary>
-    [CreateAssetMenu(fileName = "TextMeshProUGUIContentData", menuName = "StateVisualController/TextMeshProUGUI Content Data")]
-    public class TextMeshProUGUIContentData : ScriptableObject
+    [Serializable]
+    public class TextMeshProUGUIContentData
     {
-        [SerializeField] private string content = string.Empty;
+        public string content;
         
-        public string Content 
-        { 
-            get => content; 
-            set => content = value ?? string.Empty; 
+        public TextMeshProUGUIContentData()
+        {
+            content = string.Empty;
+        }
+        
+        public TextMeshProUGUIContentData(string content)
+        {
+            this.content = content ?? string.Empty;
         }
     }
 
     /// <summary>
-    /// TextMeshProUGUI 색상 변경을 위한 데이터 클래스
+    /// TextMeshProUGUI 색상 변경을 위한 직렬화 가능한 데이터 클래스
     /// </summary>
-    [CreateAssetMenu(fileName = "TextMeshProUGUIColorData", menuName = "StateVisualController/TextMeshProUGUI Color Data")]
-    public class TextMeshProUGUIColorData : ScriptableObject
+    [Serializable]
+    public class TextMeshProUGUIColorData
     {
-        [SerializeField] private Color color = Color.white;
+        public float r, g, b, a;
         
-        public Color Color 
-        { 
-            get => color; 
-            set => color = value; 
+        public TextMeshProUGUIColorData()
+        {
+            r = g = b = a = 1f;
         }
         
-        private void OnValidate()
+        public TextMeshProUGUIColorData(Color color)
         {
-            // Color 값이 유효한 범위 내에 있는지 확인
-            color.r = Mathf.Clamp01(color.r);
-            color.g = Mathf.Clamp01(color.g);
-            color.b = Mathf.Clamp01(color.b);
-            color.a = Mathf.Clamp01(color.a);
+            r = Mathf.Clamp01(color.r);
+            g = Mathf.Clamp01(color.g);
+            b = Mathf.Clamp01(color.b);
+            a = Mathf.Clamp01(color.a);
+        }
+        
+        public Color GetColor()
+        {
+            return new Color(r, g, b, a);
         }
     }
 
@@ -57,27 +64,85 @@ namespace StateVisualController
     {
         public override void ApplyState(StateHandlerData data)
         {
-            if (targetComponent is TextMeshProUGUI text && data.Data is TextMeshProUGUIContentData textData)
+            if (targetComponent is TextMeshProUGUI text && !string.IsNullOrEmpty(data.SerializedData))
             {
-                text.text = textData.Content;
+                try
+                {
+                    var textData = JsonUtility.FromJson<TextMeshProUGUIContentData>(data.SerializedData);
+                    text.text = textData.content;
+                }
+                catch (System.Exception e)
+                {
+                    Debug.LogError($"Failed to apply text content state: {e.Message}");
+                }
             }
         }
 
         public override Type[] GetTargetComponentType() => new Type[] { typeof(TextMeshProUGUI) };
 
+        public override string SerializeData(StateHandlerData stateData)
+        {
+            if (targetComponent is TextMeshProUGUI text)
+            {
+                var textData = new TextMeshProUGUIContentData(text.text);
+                return JsonUtility.ToJson(textData);
+            }
+            return string.Empty;
+        }
+
+        public override void DeserializeData(string jsonData, StateHandlerData stateData)
+        {
+            if (!string.IsNullOrEmpty(jsonData))
+            {
+                try
+                {
+                    var textData = JsonUtility.FromJson<TextMeshProUGUIContentData>(jsonData);
+                    // 데이터가 유효한지 확인
+                    if (textData != null)
+                    {
+                        stateData.SerializedData = jsonData;
+                    }
+                }
+                catch (System.Exception e)
+                {
+                    Debug.LogError($"Failed to deserialize text content data: {e.Message}");
+                }
+            }
+        }
+
 #if UNITY_EDITOR
         public override void DrawFields(StateHandlerData stateData, StateVisualController controller)
         {
-            if (stateData.Data == null)
+            TextMeshProUGUIContentData textData = null;
+            
+            // 기존 데이터가 있으면 로드
+            if (!string.IsNullOrEmpty(stateData.SerializedData))
             {
-                stateData.Data = ScriptableObject.CreateInstance<TextMeshProUGUIContentData>();
+                try
+                {
+                    textData = JsonUtility.FromJson<TextMeshProUGUIContentData>(stateData.SerializedData);
+                }
+                catch (System.Exception e)
+                {
+                    Debug.LogError($"Failed to load text content data: {e.Message}");
+                }
             }
             
-            var textData = stateData.Data as TextMeshProUGUIContentData;
+            // 데이터가 없으면 새로 생성
+            if (textData == null)
+            {
+                textData = new TextMeshProUGUIContentData();
+            }
+            
             EditorGUI.BeginChangeCheck();
-            textData.Content = EditorGUILayout.TextField("Text", textData.Content);
+            string newContent = textData.content;
+            newContent = EditorGUILayout.TextField("Text", newContent);
+            
             if (EditorGUI.EndChangeCheck())
             {
+                var newTextData = new TextMeshProUGUIContentData(newContent);
+                stateData.SerializedData = JsonUtility.ToJson(newTextData);
+                stateData.HandlerType = GetType().Name;
                 EditorUtility.SetDirty(controller);
             }
         }
@@ -91,27 +156,85 @@ namespace StateVisualController
     {
         public override void ApplyState(StateHandlerData data)
         {
-            if (targetComponent is TextMeshProUGUI text && data.Data is TextMeshProUGUIColorData colorData)
+            if (targetComponent is TextMeshProUGUI text && !string.IsNullOrEmpty(data.SerializedData))
             {
-                text.color = colorData.Color;
+                try
+                {
+                    var colorData = JsonUtility.FromJson<TextMeshProUGUIColorData>(data.SerializedData);
+                    text.color = colorData.GetColor();
+                }
+                catch (System.Exception e)
+                {
+                    Debug.LogError($"Failed to apply text color state: {e.Message}");
+                }
             }
         }
 
         public override Type[] GetTargetComponentType() => new Type[] { typeof(TextMeshProUGUI) };
 
+        public override string SerializeData(StateHandlerData stateData)
+        {
+            if (targetComponent is TextMeshProUGUI text)
+            {
+                var colorData = new TextMeshProUGUIColorData(text.color);
+                return JsonUtility.ToJson(colorData);
+            }
+            return string.Empty;
+        }
+
+        public override void DeserializeData(string jsonData, StateHandlerData stateData)
+        {
+            if (!string.IsNullOrEmpty(jsonData))
+            {
+                try
+                {
+                    var colorData = JsonUtility.FromJson<TextMeshProUGUIColorData>(jsonData);
+                    // 데이터가 유효한지 확인
+                    if (colorData != null)
+                    {
+                        stateData.SerializedData = jsonData;
+                    }
+                }
+                catch (System.Exception e)
+                {
+                    Debug.LogError($"Failed to deserialize text color data: {e.Message}");
+                }
+            }
+        }
+
 #if UNITY_EDITOR
         public override void DrawFields(StateHandlerData stateData, StateVisualController controller)
         {
-            if (stateData.Data == null)
+            TextMeshProUGUIColorData colorData = null;
+            
+            // 기존 데이터가 있으면 로드
+            if (!string.IsNullOrEmpty(stateData.SerializedData))
             {
-                stateData.Data = ScriptableObject.CreateInstance<TextMeshProUGUIColorData>();
+                try
+                {
+                    colorData = JsonUtility.FromJson<TextMeshProUGUIColorData>(stateData.SerializedData);
+                }
+                catch (System.Exception e)
+                {
+                    Debug.LogError($"Failed to load text color data: {e.Message}");
+                }
             }
             
-            var colorData = stateData.Data as TextMeshProUGUIColorData;
+            // 데이터가 없으면 새로 생성
+            if (colorData == null)
+            {
+                colorData = new TextMeshProUGUIColorData();
+            }
+            
             EditorGUI.BeginChangeCheck();
-            colorData.Color = EditorGUILayout.ColorField("Color", colorData.Color);
+            Color newColor = colorData.GetColor();
+            newColor = EditorGUILayout.ColorField("Color", newColor);
+            
             if (EditorGUI.EndChangeCheck())
             {
+                var newColorData = new TextMeshProUGUIColorData(newColor);
+                stateData.SerializedData = JsonUtility.ToJson(newColorData);
+                stateData.HandlerType = GetType().Name;
                 EditorUtility.SetDirty(controller);
             }
         }

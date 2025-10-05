@@ -10,17 +10,21 @@ namespace StateVisualController
     // ==================== Text 관련 데이터 클래스들 ====================
     
     /// <summary>
-    /// Text 내용 변경을 위한 데이터 클래스
+    /// Text 내용 변경을 위한 직렬화 가능한 데이터 클래스
     /// </summary>
-    [CreateAssetMenu(fileName = "TextContentData", menuName = "StateVisualController/Text Content Data")]
-    public class TextContentData : ScriptableObject
+    [Serializable]
+    public class TextContentData
     {
-        [SerializeField] private string content = string.Empty;
+        public string content;
         
-        public string Content 
-        { 
-            get => content; 
-            set => content = value ?? string.Empty; 
+        public TextContentData()
+        {
+            content = string.Empty;
+        }
+        
+        public TextContentData(string content)
+        {
+            this.content = content ?? string.Empty;
         }
     }
 
@@ -33,27 +37,85 @@ namespace StateVisualController
     {
         public override void ApplyState(StateHandlerData data)
         {
-            if (targetComponent is Text text && data.Data is TextContentData textData)
+            if (targetComponent is Text text && !string.IsNullOrEmpty(data.SerializedData))
             {
-                text.text = textData.Content;
+                try
+                {
+                    var textData = JsonUtility.FromJson<TextContentData>(data.SerializedData);
+                    text.text = textData.content;
+                }
+                catch (System.Exception e)
+                {
+                    Debug.LogError($"Failed to apply text content state: {e.Message}");
+                }
             }
         }
 
         public override Type[] GetTargetComponentType() => new Type[] { typeof(Text) };
 
+        public override string SerializeData(StateHandlerData stateData)
+        {
+            if (targetComponent is Text text)
+            {
+                var textData = new TextContentData(text.text);
+                return JsonUtility.ToJson(textData);
+            }
+            return string.Empty;
+        }
+
+        public override void DeserializeData(string jsonData, StateHandlerData stateData)
+        {
+            if (!string.IsNullOrEmpty(jsonData))
+            {
+                try
+                {
+                    var textData = JsonUtility.FromJson<TextContentData>(jsonData);
+                    // 데이터가 유효한지 확인
+                    if (textData != null)
+                    {
+                        stateData.SerializedData = jsonData;
+                    }
+                }
+                catch (System.Exception e)
+                {
+                    Debug.LogError($"Failed to deserialize text content data: {e.Message}");
+                }
+            }
+        }
+
 #if UNITY_EDITOR
         public override void DrawFields(StateHandlerData stateData, StateVisualController controller)
         {
-            if (stateData.Data == null)
+            TextContentData textData = null;
+            
+            // 기존 데이터가 있으면 로드
+            if (!string.IsNullOrEmpty(stateData.SerializedData))
             {
-                stateData.Data = ScriptableObject.CreateInstance<TextContentData>();
+                try
+                {
+                    textData = JsonUtility.FromJson<TextContentData>(stateData.SerializedData);
+                }
+                catch (System.Exception e)
+                {
+                    Debug.LogError($"Failed to load text content data: {e.Message}");
+                }
             }
             
-            var textData = stateData.Data as TextContentData;
+            // 데이터가 없으면 새로 생성
+            if (textData == null)
+            {
+                textData = new TextContentData();
+            }
+            
             EditorGUI.BeginChangeCheck();
-            textData.Content = EditorGUILayout.TextField("Text", textData.Content);
+            string newContent = textData.content;
+            newContent = EditorGUILayout.TextField("Text", newContent);
+            
             if (EditorGUI.EndChangeCheck())
             {
+                var newTextData = new TextContentData(newContent);
+                stateData.SerializedData = JsonUtility.ToJson(newTextData);
+                stateData.HandlerType = GetType().Name;
                 EditorUtility.SetDirty(controller);
             }
         }

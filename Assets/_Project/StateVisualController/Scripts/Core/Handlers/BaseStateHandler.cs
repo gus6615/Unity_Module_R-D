@@ -8,12 +8,14 @@ namespace StateVisualController
 {
     /// <summary>
     /// 각 상태별 핸들러 데이터를 저장하는 클래스
+    /// ScriptableObject 대신 직접 직렬화 가능한 데이터 구조 사용
     /// </summary>
     [Serializable]
     public class StateHandlerData
     {
         [SerializeField] private string stateName;
-        [SerializeField] private ScriptableObject data;
+        [SerializeField] private string handlerType;
+        [SerializeField] private string serializedData; // JSON 형태로 직렬화된 데이터
         
         public string StateName 
         { 
@@ -21,22 +23,37 @@ namespace StateVisualController
             set => stateName = value; 
         }
         
-        public ScriptableObject Data 
+        public string HandlerType 
         { 
-            get => data; 
-            set => data = value; 
+            get => handlerType; 
+            set => handlerType = value; 
+        }
+        
+        public string SerializedData 
+        { 
+            get => serializedData; 
+            set => serializedData = value; 
         }
         
         public StateHandlerData()
         {
             stateName = string.Empty;
-            data = null;
+            handlerType = string.Empty;
+            serializedData = string.Empty;
         }
         
         public StateHandlerData(string stateName)
         {
             this.stateName = stateName;
-            this.data = null;
+            this.handlerType = string.Empty;
+            this.serializedData = string.Empty;
+        }
+        
+        public StateHandlerData(string stateName, string handlerType)
+        {
+            this.stateName = stateName;
+            this.handlerType = handlerType;
+            this.serializedData = string.Empty;
         }
     }
 
@@ -68,6 +85,26 @@ namespace StateVisualController
         public virtual void SetTargetComponent(Component component)
         {
             targetComponent = component;
+        }
+
+        /// <summary>
+        /// 핸들러 데이터를 JSON 문자열로 직렬화
+        /// </summary>
+        /// <param name="stateData">직렬화할 상태 데이터</param>
+        /// <returns>JSON 문자열</returns>
+        public virtual string SerializeData(StateHandlerData stateData)
+        {
+            return string.Empty; // 기본 구현은 빈 문자열 반환
+        }
+
+        /// <summary>
+        /// JSON 문자열에서 핸들러 데이터를 역직렬화
+        /// </summary>
+        /// <param name="jsonData">역직렬화할 JSON 문자열</param>
+        /// <param name="stateData">데이터를 저장할 상태 데이터 객체</param>
+        public virtual void DeserializeData(string jsonData, StateHandlerData stateData)
+        {
+            // 기본 구현은 아무것도 하지 않음
         }
 
 #if UNITY_EDITOR
