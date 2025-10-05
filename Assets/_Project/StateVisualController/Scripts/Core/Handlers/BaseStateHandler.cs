@@ -8,14 +8,19 @@ namespace StateVisualController
 {
     /// <summary>
     /// 각 상태별 핸들러 데이터를 저장하는 클래스
-    /// ScriptableObject 대신 직접 직렬화 가능한 데이터 구조 사용
+    /// Unity의 직렬화 시스템을 활용하여 에디터와 런타임 모두에서 동작
     /// </summary>
     [Serializable]
     public class StateHandlerData
     {
         [SerializeField] private string stateName;
         [SerializeField] private string handlerType;
-        [SerializeField] private string serializedData; // JSON 형태로 직렬화된 데이터
+        
+        // Unity가 직접 직렬화할 수 있는 필드들
+        [SerializeField] private Sprite spriteData;
+        [SerializeField] private Color colorData;
+        [SerializeField] private string textData;
+        [SerializeField] private bool boolData;
         
         public string StateName 
         { 
@@ -29,31 +34,62 @@ namespace StateVisualController
             set => handlerType = value; 
         }
         
-        public string SerializedData 
+        // Sprite 관련 프로퍼티
+        public Sprite SpriteData 
         { 
-            get => serializedData; 
-            set => serializedData = value; 
+            get => spriteData; 
+            set => spriteData = value; 
+        }
+        
+        // Color 관련 프로퍼티
+        public Color ColorData 
+        { 
+            get => colorData; 
+            set => colorData = value; 
+        }
+        
+        // Text 관련 프로퍼티
+        public string TextData 
+        { 
+            get => textData; 
+            set => textData = value ?? string.Empty; 
+        }
+        
+        // Boolean 관련 프로퍼티
+        public bool BoolData 
+        { 
+            get => boolData; 
+            set => boolData = value; 
         }
         
         public StateHandlerData()
         {
             stateName = string.Empty;
             handlerType = string.Empty;
-            serializedData = string.Empty;
+            spriteData = null;
+            colorData = Color.white;
+            textData = string.Empty;
+            boolData = true;
         }
         
         public StateHandlerData(string stateName)
         {
             this.stateName = stateName;
-            this.handlerType = string.Empty;
-            this.serializedData = string.Empty;
+            handlerType = string.Empty;
+            spriteData = null;
+            colorData = Color.white;
+            textData = string.Empty;
+            boolData = true;
         }
         
         public StateHandlerData(string stateName, string handlerType)
         {
             this.stateName = stateName;
             this.handlerType = handlerType;
-            this.serializedData = string.Empty;
+            spriteData = null;
+            colorData = Color.white;
+            textData = string.Empty;
+            boolData = true;
         }
     }
 

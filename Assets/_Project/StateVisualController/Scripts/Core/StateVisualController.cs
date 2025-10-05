@@ -395,17 +395,7 @@ namespace StateVisualController
         private void OnEnable()
         {
             // 프리팹에서 로드된 경우 데이터 복구
-            RestoreDataFromPrefab();
-        }
-
-        /// <summary>
-        /// 컴포넌트가 비활성화될 때 호출
-        /// 프리팹 생성 전에 데이터를 보존
-        /// </summary>
-        private void OnDisable()
-        {
-            // 프리팹 생성 전에 데이터 보존
-            PreserveDataForPrefab();
+            RestoreAllHandlers();
         }
 
         #endregion
@@ -479,16 +469,6 @@ namespace StateVisualController
                     if (actor.SelectedComponent != null)
                     {
                         actor.Handler.SetTargetComponent(actor.SelectedComponent);
-                    }
-                    
-                    // 모든 상태 데이터의 HandlerType 설정 및 역직렬화
-                    foreach (var stateData in actor.StateDataList)
-                    {
-                        stateData.HandlerType = actor.HandlerType;
-                        if (!string.IsNullOrEmpty(stateData.SerializedData))
-                        {
-                            actor.Handler.DeserializeData(stateData.SerializedData, stateData);
-                        }
                     }
                 }
             }
@@ -571,43 +551,6 @@ namespace StateVisualController
             }
         }
         
-        /// <summary>
-        /// 프리팹 생성 전에 모든 데이터를 직렬화하여 보존
-        /// </summary>
-        public void PreserveDataForPrefab()
-        {
-            foreach (var actor in actors)
-            {
-                if (actor.Handler != null)
-                {
-                    foreach (var stateData in actor.StateDataList)
-                    {
-                        // 현재 상태를 직렬화하여 보존
-                        string serializedData = actor.Handler.SerializeData(stateData);
-                        if (!string.IsNullOrEmpty(serializedData))
-                        {
-                            stateData.SerializedData = serializedData;
-                            stateData.HandlerType = actor.HandlerType;
-                        }
-                    }
-                }
-            }
-        }
-
-        /// <summary>
-        /// 프리팹에서 로드된 후 데이터를 복구
-        /// </summary>
-        public void RestoreDataFromPrefab()
-        {
-            foreach (var actor in actors)
-            {
-                if (!string.IsNullOrEmpty(actor.HandlerType) && actor.Target != null)
-                {
-                    RestoreHandlerForActor(actor);
-                }
-            }
-        }
-
         #endregion
     }
 }
