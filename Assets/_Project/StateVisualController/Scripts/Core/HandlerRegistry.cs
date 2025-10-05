@@ -104,7 +104,8 @@ namespace StateVisualController
             try
             {
                 // 핸들러 타입 이름으로 Type 찾기
-                Type handlerType = Type.GetType($"StateVisualController.{handlerTypeName}");
+                string namespaceName = typeof(BaseStateHandler).Namespace;
+                Type handlerType = Type.GetType($"{namespaceName}.{handlerTypeName}");
                 if (handlerType == null)
                 {
                     Debug.LogError($"Handler type '{handlerTypeName}' not found");
