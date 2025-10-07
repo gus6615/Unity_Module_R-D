@@ -13,11 +13,21 @@ namespace StateVisualController
     /// </summary>
     public class GameObjectActiveHandler : BaseStateHandler
     {
+        [Serializable]
+        private struct Data
+        {
+            public bool active;
+        }
+
         public override void ApplyState(StateHandlerData data)
         {
             if (targetComponent is Transform)
             {
-                targetComponent.gameObject.SetActive(data.BoolData);
+                var json = data.TextData;
+                var parsed = string.IsNullOrEmpty(json) 
+                    ? new Data { active = true } 
+                    : JsonUtility.FromJson<Data>(json);
+                targetComponent.gameObject.SetActive(parsed.active);
             }
         }
 
@@ -26,13 +36,16 @@ namespace StateVisualController
 #if UNITY_EDITOR
         public override void DrawFields(StateHandlerData stateData, StateVisualController controller)
         {
+            var data = string.IsNullOrEmpty(stateData.TextData)
+                ? new Data { active = true }
+                : JsonUtility.FromJson<Data>(stateData.TextData);
+
             EditorGUI.BeginChangeCheck();
-            bool newActive = stateData.BoolData;
-            newActive = EditorGUILayout.Toggle("Active", newActive);
-            
+            bool newActive = EditorGUILayout.Toggle("Active", data.active);
             if (EditorGUI.EndChangeCheck())
             {
-                stateData.BoolData = newActive;
+                data.active = newActive;
+                stateData.TextData = JsonUtility.ToJson(data);
                 stateData.HandlerType = GetType().Name;
                 EditorUtility.SetDirty(controller);
             }

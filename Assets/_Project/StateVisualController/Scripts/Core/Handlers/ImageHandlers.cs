@@ -14,11 +14,31 @@ namespace StateVisualController
     /// </summary>
     public class ImageSpriteHandler : BaseStateHandler
     {
+        [Serializable]
+        private struct Data { public string spriteGuid; }
         public override void ApplyState(StateHandlerData data)
         {
             if (targetComponent is Image image)
             {
-                image.sprite = data.SpriteData;
+                var json = data.TextData;
+                if (!string.IsNullOrEmpty(json))
+                {
+                    var parsed = JsonUtility.FromJson<Data>(json);
+#if UNITY_EDITOR
+                    if (!string.IsNullOrEmpty(parsed.spriteGuid))
+                    {
+                        var path = AssetDatabase.GUIDToAssetPath(parsed.spriteGuid);
+                        var sprite = AssetDatabase.LoadAssetAtPath<Sprite>(path);
+                        image.sprite = sprite;
+                    }
+                    else
+                    {
+                        image.sprite = null;
+                    }
+#else
+                    // 런타임에서는 GUID 로딩이 불가하므로 sprite 적용 생략
+#endif
+                }
             }
         }
 
@@ -27,13 +47,26 @@ namespace StateVisualController
 #if UNITY_EDITOR
         public override void DrawFields(StateHandlerData stateData, StateVisualController controller)
         {
+            Sprite current = null;
+            if (!string.IsNullOrEmpty(stateData.TextData))
+            {
+                var parsed = JsonUtility.FromJson<Data>(stateData.TextData);
+                if (!string.IsNullOrEmpty(parsed.spriteGuid))
+                {
+                    var path = AssetDatabase.GUIDToAssetPath(parsed.spriteGuid);
+                    current = AssetDatabase.LoadAssetAtPath<Sprite>(path);
+                }
+            }
+
             EditorGUI.BeginChangeCheck();
-            Sprite newSprite = stateData.SpriteData;
-            newSprite = (Sprite)EditorGUILayout.ObjectField("Sprite", newSprite, typeof(Sprite), false);
-            
+            Sprite newSprite = (Sprite)EditorGUILayout.ObjectField("Sprite", current, typeof(Sprite), false);
             if (EditorGUI.EndChangeCheck())
             {
-                stateData.SpriteData = newSprite;
+                var newData = new Data
+                {
+                    spriteGuid = newSprite != null ? AssetDatabase.AssetPathToGUID(AssetDatabase.GetAssetPath(newSprite)) : string.Empty
+                };
+                stateData.TextData = JsonUtility.ToJson(newData);
                 stateData.HandlerType = GetType().Name;
                 EditorUtility.SetDirty(controller);
             }
@@ -46,11 +79,17 @@ namespace StateVisualController
     /// </summary>
     public class ImageColorHandler : BaseStateHandler
     {
+        [Serializable]
+        private struct Data { public Color color; }
         public override void ApplyState(StateHandlerData data)
         {
             if (targetComponent is Image image)
             {
-                image.color = data.ColorData;
+                var json = data.TextData;
+                var parsed = string.IsNullOrEmpty(json)
+                    ? new Data { color = Color.white }
+                    : JsonUtility.FromJson<Data>(json);
+                image.color = parsed.color;
             }
         }
 
@@ -59,13 +98,16 @@ namespace StateVisualController
 #if UNITY_EDITOR
         public override void DrawFields(StateHandlerData stateData, StateVisualController controller)
         {
+            var data = string.IsNullOrEmpty(stateData.TextData)
+                ? new Data { color = Color.white }
+                : JsonUtility.FromJson<Data>(stateData.TextData);
+
             EditorGUI.BeginChangeCheck();
-            Color newColor = stateData.ColorData;
-            newColor = EditorGUILayout.ColorField("Color", newColor);
-            
+            var newColor = EditorGUILayout.ColorField("Color", data.color);
             if (EditorGUI.EndChangeCheck())
             {
-                stateData.ColorData = newColor;
+                data.color = newColor;
+                stateData.TextData = JsonUtility.ToJson(data);
                 stateData.HandlerType = GetType().Name;
                 EditorUtility.SetDirty(controller);
             }

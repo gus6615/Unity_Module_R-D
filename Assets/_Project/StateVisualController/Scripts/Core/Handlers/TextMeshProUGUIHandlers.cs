@@ -46,11 +46,17 @@ namespace StateVisualController
     /// </summary>
     public class TextMeshProUGUIColorHandler : BaseStateHandler
     {
+        [Serializable]
+        private struct Data { public Color color; }
         public override void ApplyState(StateHandlerData data)
         {
             if (targetComponent is TextMeshProUGUI text)
             {
-                text.color = data.ColorData;
+                var json = data.TextData;
+                var parsed = string.IsNullOrEmpty(json)
+                    ? new Data { color = Color.white }
+                    : JsonUtility.FromJson<Data>(json);
+                text.color = parsed.color;
             }
         }
 
@@ -59,13 +65,16 @@ namespace StateVisualController
 #if UNITY_EDITOR
         public override void DrawFields(StateHandlerData stateData, StateVisualController controller)
         {
+            var data = string.IsNullOrEmpty(stateData.TextData)
+                ? new Data { color = Color.white }
+                : JsonUtility.FromJson<Data>(stateData.TextData);
+
             EditorGUI.BeginChangeCheck();
-            Color newColor = stateData.ColorData;
-            newColor = EditorGUILayout.ColorField("Color", newColor);
-            
+            var newColor = EditorGUILayout.ColorField("Color", data.color);
             if (EditorGUI.EndChangeCheck())
             {
-                stateData.ColorData = newColor;
+                data.color = newColor;
+                stateData.TextData = JsonUtility.ToJson(data);
                 stateData.HandlerType = GetType().Name;
                 EditorUtility.SetDirty(controller);
             }

@@ -15,12 +15,7 @@ namespace StateVisualController
     {
         [SerializeField] private string stateName;
         [SerializeField] private string handlerType;
-        
-        // Unity가 직접 직렬화할 수 있는 필드들
-        [SerializeField] private Sprite spriteData;
-        [SerializeField] private Color colorData;
         [SerializeField] private string textData;
-        [SerializeField] private bool boolData;
         
         public string StateName 
         { 
@@ -34,20 +29,6 @@ namespace StateVisualController
             set => handlerType = value; 
         }
         
-        // Sprite 관련 프로퍼티
-        public Sprite SpriteData 
-        { 
-            get => spriteData; 
-            set => spriteData = value; 
-        }
-        
-        // Color 관련 프로퍼티
-        public Color ColorData 
-        { 
-            get => colorData; 
-            set => colorData = value; 
-        }
-        
         // Text 관련 프로퍼티
         public string TextData 
         { 
@@ -55,41 +36,25 @@ namespace StateVisualController
             set => textData = value ?? string.Empty; 
         }
         
-        // Boolean 관련 프로퍼티
-        public bool BoolData 
-        { 
-            get => boolData; 
-            set => boolData = value; 
-        }
-        
         public StateHandlerData()
         {
             stateName = string.Empty;
             handlerType = string.Empty;
-            spriteData = null;
-            colorData = Color.white;
             textData = string.Empty;
-            boolData = true;
         }
         
         public StateHandlerData(string stateName)
         {
             this.stateName = stateName;
             handlerType = string.Empty;
-            spriteData = null;
-            colorData = Color.white;
             textData = string.Empty;
-            boolData = true;
         }
         
         public StateHandlerData(string stateName, string handlerType)
         {
             this.stateName = stateName;
             this.handlerType = handlerType;
-            spriteData = null;
-            colorData = Color.white;
             textData = string.Empty;
-            boolData = true;
         }
     }
 
