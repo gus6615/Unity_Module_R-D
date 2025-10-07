@@ -102,24 +102,6 @@ MonoBehaviour:
       textData: Gold
       boolData: 1
   - isEnabled: 1
-    target: {fileID: 4629384085762181879}
-    selectedComponent: {fileID: 1318618066384351426}
-    selectedComponentType: TextMeshProUGUI
-    handlerType: TextMeshProUGUIColorHandler
-    stateDataList:
-    - stateName: Dia
-      handlerType: TextMeshProUGUIColorHandler
-      spriteData: {fileID: 0}
-      colorData: {r: 0, g: 1, b: 1, a: 1}
-      textData: 
-      boolData: 1
-    - stateName: Gold
-      handlerType: TextMeshProUGUIColorHandler
-      spriteData: {fileID: 0}
-      colorData: {r: 1, g: 1, b: 0, a: 1}
-      textData: 
-      boolData: 1
-  - isEnabled: 1
     target: {fileID: 7735128453426227578}
     selectedComponent: {fileID: 7461538173654948764}
     selectedComponentType: TextMeshPro
@@ -172,6 +154,24 @@ MonoBehaviour:
       spriteData: {fileID: 0}
       colorData: {r: 1, g: 1, b: 1, a: 1}
       textData: ScaleUp
+      boolData: 1
+  - isEnabled: 1
+    target: {fileID: 7102027941201973999}
+    selectedComponent: {fileID: 5632207006386077236}
+    selectedComponentType: RectTransform
+    handlerType: LocalScaleHandler
+    stateDataList:
+    - stateName: Dia
+      handlerType: LocalScaleHandler
+      spriteData: {fileID: 0}
+      colorData: {r: 1, g: 1, b: 1, a: 1}
+      textData: '{"localScale":{"x":2.0,"y":2.0,"z":2.0}}'
+      boolData: 1
+    - stateName: Gold
+      handlerType: LocalScaleHandler
+      spriteData: {fileID: 0}
+      colorData: {r: 1, g: 1, b: 1, a: 1}
+      textData: '{"localScale":{"x":0.0,"y":0.0,"z":0.0}}'
       boolData: 1
   currentState: Dia
 --- !u!111 &5117455609260818459
@@ -364,7 +364,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: -47.5}
-  m_SizeDelta: {x: 200, y: 195}
+  m_SizeDelta: {x: 200, y: 200}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &7102027941201973999
 GameObject:
@@ -391,7 +391,7 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7102027941201973999}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -400,7 +400,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 47.5}
+  m_AnchoredPosition: {x: 0, y: 50}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &7263110376309268347
